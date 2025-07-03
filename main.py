@@ -11,19 +11,27 @@ def save_tasks(tasks):
     with open('tasks.json', 'w') as f:
         json.dump(tasks, f, indent=2, ensure_ascii=False)
         
-def add_task(task):
+def add_task():
     description = input("Digite a descrição da tarefa: ")
-    tasks = {"description": description}
+    task = {"description": description}
     
     tasks = load_tasks()    # Carrega as tarefas que já existem
-    tasks.append(tasks)     # Adiciona a nova
+    tasks.append(task)     # Adiciona a nova
     
-    save_tasks()            # Salva tudo de volta no arquivo
+    save_tasks(tasks)            # Salva tudo de volta no arquivo
     
     print("✅ Tarefa adicionada com sucesso!")
     
+def list_tasks():
+    tasks = load_tasks()
+    
+    if not tasks:
+        print("📭 Nenhuma tarefa encontrada.")
+        return
 
-add_task()
+    print("📝 Suas Tarefas:")
+    for i, task in enumerate(tasks, 1):
+        print(f" {i} - {task['description']}")
 
 def menu():
     while True:
@@ -49,13 +57,3 @@ if __name__ == "__main__":
     menu()
     
     
-def list_tasks():
-    tasks = load_tasks()
-    
-    if not tasks:
-        print("📭 Nenhuma tarefa encontrada.")
-        return
-
-    print("📝 Suas Tarefas:")
-    for i, task in enumerate(tasks, 1):
-        print(f" {i} - {task['description']}")
