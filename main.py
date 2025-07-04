@@ -1,13 +1,14 @@
 import json
 from dotenv import load_dotenv
 import os
+from openai import OpenAI
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-from openai import OpenAI
-client = OpenAI(api_key=api_key)
-
+if not api_key:
+    print("❌ Erro: A variavel OPENAI_API_KEY não foi econtrada no ambiente.")
+    print("Por favor")
 
 def load_tasks():
     try:
