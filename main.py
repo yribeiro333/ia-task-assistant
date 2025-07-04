@@ -14,8 +14,8 @@ if not api_key:
     exit(1)
 
 client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
     api_key=api_key,
-    base_url="https://api.openrouter.ai/api/v1",
 )
 
 def load_tasks():
@@ -110,7 +110,7 @@ Exemplo de resposta:
         temperature=0.3
     )
 
-    conteudo = response.choices[0].message["content"]
+    conteudo = response.choices[0].message.content
 
     try:
         dados = json.loads(conteudo)
