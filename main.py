@@ -171,6 +171,10 @@ from datetime import datetime, timedelta
 import threading
 import time
 
+
+def mostrar_lembrete(task):
+    print(f"\n🔔 Lembrete: {task['description']}' agora ({task.get('data')} às {task.get('hora')})!\n")
+
 def verificar_tarefas():
     tasks = load_tasks()
     now = datetime.now()
@@ -188,8 +192,6 @@ def verificar_tarefas():
             except ValueError:
                 pass
 
-def mostrar_lembrete(task):
-    print(f"\n🔔 Lembrete: {task['description']}' agora ({task.get('data')} às {task.get('hora')})!"\n")
-
 if __name__ == "__main__":
+    threading.Thread(target=verificar_tarefas, daemon=True).start()
     menu()
