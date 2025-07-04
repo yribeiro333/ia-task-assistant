@@ -36,32 +36,6 @@ def list_tasks():
     for i, task in enumerate(tasks, 1):
         print(f" {i} - {task['description']}")
 
-def menu():
-    while True:
-        print("\n=== Assistente de Tarefas ===")
-        print("1 - Adicionar Tarefa")
-        print("2 - Listar Tarefas")
-        print("3 - Marcar/Remover Tarefa")
-        print("4 - Sair")
-        
-        option = input("Escolha um opção:")
-        
-        if option == '1':
-            add_task()
-        elif option == '2':
-            list_tasks()
-        elif option == '3':
-            update_or_remove_task()
-        elif option == '4':
-            print("👋 Até mais!")
-            break
-        else:
-            print("❌ Opção inválida. Tente novamente.")
-            
-            
-if __name__ == "__main__":
-    menu()
-    
 def update_or_remove_task():
     tasks = load_tasks()
     
@@ -97,3 +71,30 @@ def update_or_remove_task():
         return
     
     save_tasks(tasks)
+
+def menu():
+    while True:
+        print("\n=== Assistente de Tarefas ===")
+        print("1 - Adicionar Tarefa")
+        print("2 - Listar Tarefas")
+        print("3 - Marcar/Remover Tarefa")
+        print("4 - Sair")
+        
+        option = input("Escolha um opção:")
+        
+        if option == '1':
+            add_task()
+        elif option == '2':
+            list_tasks()
+        elif option == '3':
+            update_or_remove_task()
+        elif option == '4':
+            print("👋 Até mais!")
+            break
+        else:
+            print("❌ Opção inválida. Tente novamente.")
+            
+            
+if __name__ == "__main__":
+    menu()
+
