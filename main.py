@@ -1,7 +1,13 @@
-import openai
+import json
 from dotenv import load_dotenv
 import os
-import json
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+
+from openai import OpenAI
+client = OpenAI(api_key=api_key)
+
 
 def load_tasks():
     try:
@@ -19,7 +25,7 @@ def add_task():
     task = {
         "description": description,
         "done": False
-}
+    }
 
     tasks = load_tasks()   # Carrega as tarefas que já existem
     tasks.append(task)     # Adiciona a nova
@@ -75,6 +81,7 @@ def update_or_remove_task():
     
     save_tasks(tasks)
 
+
 def interpret_command(command):
     prompt = f"""
 Você é um assistente que ajuda a organizar tarefas.
@@ -89,7 +96,7 @@ Exemplo de resposta:
 {{"descricao": "...", "data": "...", "hora": "..."}}
 """
     
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3
@@ -145,6 +152,8 @@ def menu():
         elif option == '3':
             update_or_remove_task()
         elif option == '4':
+            add_task_ia()
+        elif option == '5':
             print("👋 Até mais!")
             break
         else:
@@ -153,6 +162,3 @@ def menu():
             
 if __name__ == "__main__":
     menu()
-
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
