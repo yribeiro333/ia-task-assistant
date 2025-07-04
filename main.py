@@ -12,7 +12,7 @@ if not api_key:
     print("OPENAI_API_KEY=xxxxx")
     exit(1)
 
-    client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=api_key)
 
 def load_tasks():
     try:
@@ -34,9 +34,7 @@ def add_task():
 
     tasks = load_tasks()   # Carrega as tarefas que já existem
     tasks.append(task)     # Adiciona a nova
-    
     save_tasks(tasks)      # Salva tudo de volta no arquivo
-    
     print("✅ Tarefa adicionada com sucesso!")
     
 def list_tasks():
@@ -48,7 +46,8 @@ def list_tasks():
 
     print("📝 Suas Tarefas:")
     for i, task in enumerate(tasks, 1):
-        print(f" {i} - {task['description']}")
+        status = "✅" if task.get('done') else "❌"
+        print(f"{i}. [{status}] {task['description']}")
 
 def update_or_remove_task():
     tasks = load_tasks()
