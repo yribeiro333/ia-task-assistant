@@ -4,15 +4,18 @@ import os
 from openai import OpenAI
 
 load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("OPENROUTER_API_KEY")
 
 if not api_key:
-    print("❌ Erro: A variavel OPENAI_API_KEY não foi econtrada no ambiente.")
-    print("Por favor, crie um arquivo .env com sua chave da OpenAI.")
-    print("OPENAI_API_KEY=xxxxx")
+    print("❌ Erro: A variavel OPENROUTER_API_KEY não foi econtrada no ambiente.")
+    print("Por favor, crie um arquivo .env com sua chave da OpenRouter.")
+    print("OPENROUTER_API_KEY=xxxxx")
     exit(1)
 
-client = OpenAI(api_key=api_key)
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://api.openrouter.ai/v1",
+)
 
 def load_tasks():
     try:
