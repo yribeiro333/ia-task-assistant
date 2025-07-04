@@ -110,12 +110,11 @@ Exemplo de resposta:
         temperature=0.3
     )
 
-    conteudo = response.choices[0].message.content
-
     try:
+        conteudo = response.choices[0].message.content
         dados = json.loads(conteudo)
         return dados
-    except json.JSONDecodeError:
+    except (ArithmeticError, json.JSONDecodeError):
         print("❌ A IA não conseguiu interpretar o comando corretamente.")
         print("🧪 Resposta bruta:", conteudo)
         return None
