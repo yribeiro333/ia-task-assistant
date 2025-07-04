@@ -8,7 +8,11 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
     print("❌ Erro: A variavel OPENAI_API_KEY não foi econtrada no ambiente.")
-    print("Por favor")
+    print("Por favor, crie um arquivo .env com sua chave da OpenAI.")
+    print("OPENAI_API_KEY=xxxxx")
+    exit(1)
+
+    client = OpenAI(api_key=api_key)
 
 def load_tasks():
     try:
