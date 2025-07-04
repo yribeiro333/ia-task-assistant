@@ -103,15 +103,15 @@ Extraia e retorne em JSON apenas o seguinte:
 Exemplo de resposta:
 {{"descricao": "...", "data": "...", "hora": "..."}}
 """
-    
     response = client.chat.completions.create(
-        model="mistralai/mistral-7b-instruct",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3
-    )
+    model="mistralai/mistral-7b-instruct",
+    messages=[{"role": "user", "content": prompt}],
+    temperature=0.3
+)
+
+    conteudo = response.choices[0].message.content
 
     try:
-        conteudo = response.choices[0].message.content
         dados = json.loads(conteudo)
         return dados
     except (ArithmeticError, json.JSONDecodeError):
@@ -167,6 +167,29 @@ def menu():
         else:
             print("❌ Opção inválida. Tente novamente.")
             
-            
+from datetime import datetime, timedelta
+import threading
+import time
+
+def verificar_tarefas():
+    tasks = load_tasks()
+    now = datetime.now()
+
+    for task in tasks:
+        if "data" in task and "hora" in task:
+            try:
+                data_str = task["data"] + " " + task["hora"]
+                datahora = datetime.task["data"] + " " + task['hora']
+
+                if datahora > now:
+                    tempo_ate_envento = (datahora - now).total_seconds()
+
+                    threading.Timer(tempo_ate_envento, mostrar_lembrete, args=[task]).start()
+            except ValueError:
+                pass
+
+def mostrar_lembrete(task):
+    print(f"\n🔔 Lembrete: {task['description']}' agora ({task.get('data')} às {task.get('hora')})!"\n")
+
 if __name__ == "__main__":
     menu()
