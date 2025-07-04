@@ -1,3 +1,6 @@
+import openai
+from dotenv import load_dotenv
+import os
 import json
 
 def load_tasks():
@@ -72,13 +75,66 @@ def update_or_remove_task():
     
     save_tasks(tasks)
 
+def interpret_command(command):
+    prompt = f"""
+Você é um assistente que ajuda a organizar tarefas.
+A seguinte frase foi dita por um usuário: "{command}"
+
+Extraia e retorne em JSON apenas o seguinte:
+- descrição (texto da tarefa)
+- data (no formato DD/MM/AAAA, se houver)
+- hora (no formato HH:MM, se houver)
+
+Exemplo de resposta:
+{{"descricao": "...", "data": "...", "hora": "..."}}
+"""
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
+    )
+
+    conteudo = response.choices[0].message["content"]
+
+    try:
+        dados = json.loads(conteudo)
+        return dados
+    except json.JSONDecodeError:
+        print("❌ A IA não conseguiu interpretar o comando corretamente.")
+        return None
+
+def add_task_ia():
+    command = input("Descreva a tarefa com linguagem natural: ")
+
+    dados = interpret_command(command)
+    if not dados:
+        return
+    
+    task = {
+        "description": dados.get("descricao", "Tarefa sem descrição"),
+        "done": False
+    }
+
+    if dados.get("data"):
+        task["data"] = dados["data"]
+    if dados.get("hora"):
+        task["hora"] = dados["hora"]
+
+    tasks = load_tasks()
+    tasks.append(task)
+    save_tasks(tasks)
+
+    print("✅ Tarefa adicionada com sucesso (via IA)!")
+
 def menu():
     while True:
         print("\n=== Assistente de Tarefas ===")
         print("1 - Adicionar Tarefa")
         print("2 - Listar Tarefas")
         print("3 - Marcar/Remover Tarefa")
-        print("4 - Sair")
+        print("4 - Adicionar por IA") # <-- nova opção
+        print("5 - Sair")
         
         option = input("Escolha um opção:")
         
@@ -98,3 +154,5 @@ def menu():
 if __name__ == "__main__":
     menu()
 
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
