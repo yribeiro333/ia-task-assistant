@@ -97,13 +97,14 @@ def interpret_command(command):
 Você é um assistente que ajuda a organizar tarefas.
 A seguinte frase foi dita por um usuário: "{command}"
 
-Extraia e retorne em JSON apenas o seguinte:
+Extraia e retorne em JSON e os seguintes campos obrigatórios:
 - descrição (texto da tarefa)
-- data (no formato DD/MM/AAAA, se houver)
+- data (no formato DD/MM/AAAA, ou "hoje", "amanhã", convertido para data real)
 - hora (no formato HH:MM, se houver)
 
+A data nunca deve ser omitida. Se o usuário disser "hoje" ou "amanhã", retorne a data real.
 Exemplo de resposta:
-{{"descricao": "...", "data": "...", "hora": "..."}}
+{{"descricao": "...", "data": "04/07/2025", "hora": "14:30"}}
 """
     response = client.chat.completions.create(
     model="mistralai/mistral-7b-instruct",
