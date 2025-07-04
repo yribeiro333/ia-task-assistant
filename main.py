@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 
+
 load_dotenv()
 api_key = os.getenv("OPENROUTER_API_KEY")
 
@@ -116,6 +117,7 @@ Exemplo de resposta:
         return dados
     except json.JSONDecodeError:
         print("❌ A IA não conseguiu interpretar o comando corretamente.")
+        print("🧪 Resposta bruta:", conteudo)
         return None
 
 def add_task_ia():
