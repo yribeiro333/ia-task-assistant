@@ -18,10 +18,10 @@ def add_task():
         "done": False
 }
 
-    tasks = load_tasks()    # Carrega as tarefas que já existem
+    tasks = load_tasks()   # Carrega as tarefas que já existem
     tasks.append(task)     # Adiciona a nova
     
-    save_tasks(tasks)            # Salva tudo de volta no arquivo
+    save_tasks(tasks)      # Salva tudo de volta no arquivo
     
     print("✅ Tarefa adicionada com sucesso!")
     
