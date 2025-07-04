@@ -4,13 +4,12 @@ import os
 from openai import OpenAI
 from datetime import datetime, timedelta
 import threading
-import time
 
 load_dotenv()
 api_key = os.getenv("OPENROUTER_API_KEY")
 
 if not api_key:
-    print("❌ Erro: A variavel OPENROUTER_API_KEY não foi econtrada no ambiente.")
+    print("❌ Erro: A variável OPENROUTER_API_KEY não foi encontrada no ambiente.")
     print("Por favor, crie um arquivo .env com sua chave da OpenRouter.")
     print("OPENROUTER_API_KEY=xxxxx")
     exit(1)
@@ -26,11 +25,11 @@ def load_tasks():
             return json.load(f)
     except FileNotFoundError:
         return []
-    
+
 def save_tasks(tasks):
     with open('tasks.json', 'w') as f:
         json.dump(tasks, f, indent=2, ensure_ascii=False)
-        
+
 def add_task():
     description = input("Digite a descrição da tarefa: ")
     task = {
@@ -38,14 +37,14 @@ def add_task():
         "done": False
     }
 
-    tasks = load_tasks()   # Carrega as tarefas que já existem
-    tasks.append(task)     # Adiciona a nova
-    save_tasks(tasks)      # Salva tudo de volta no arquivo
+    tasks = load_tasks()
+    tasks.append(task)
+    save_tasks(tasks)
     print("✅ Tarefa adicionada com sucesso!")
-    
+
 def list_tasks():
     tasks = load_tasks()
-    
+
     if not tasks:
         print("📭 Nenhuma tarefa encontrada.")
         return
@@ -57,7 +56,7 @@ def list_tasks():
 
 def update_or_remove_task():
     tasks = load_tasks()
-    
+
     if not tasks:
         print("📭 Nenhuma tarefa encontrada.")
         return
@@ -75,7 +74,7 @@ def update_or_remove_task():
     except ValueError:
         print("Entrada inválida. Por favor, digite um número.")
         return
-    
+
     task = tasks[choice - 1]
 
     action = input("Digite 'm' para marcar como feita, 'r' para remover: ").lower()
@@ -88,9 +87,8 @@ def update_or_remove_task():
     else:
         print("Ação inválida.")
         return
-    
-    save_tasks(tasks)
 
+    save_tasks(tasks)
 
 def interpret_command(command):
     prompt = f"""
@@ -107,10 +105,10 @@ Exemplo de resposta:
 {{"descricao": "...", "data": "04/07/2025", "hora": "14:30"}}
 """
     response = client.chat.completions.create(
-    model="mistralai/mistral-7b-instruct",
-    messages=[{"role": "user", "content": prompt}],
-    temperature=0.3
-)
+        model="mistralai/mistral-7b-instruct",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
+    )
 
     conteudo = response.choices[0].message.content
 
@@ -124,11 +122,10 @@ Exemplo de resposta:
 
 def add_task_ia():
     command = input("Descreva a tarefa com linguagem natural: ")
-
     dados = interpret_command(command)
     if not dados:
         return
-    
+
     task = {
         "description": dados.get("descricao", "Tarefa sem descrição"),
         "done": False
@@ -145,26 +142,40 @@ def add_task_ia():
 
     print("✅ Tarefa adicionada com sucesso (via IA)!")
 
+    try:
+        agendar_lembrete(task)
+    except Exception as e:
+        print("❌ Erro ao agendar lembrete.")
+        print("→", e)
 
 def mostrar_lembrete(task):
-    print(f"\n🔔 Lembrete: {task['description']}' agora ({task.get('data')} às {task.get('hora')})!\n")
+    print(f"\n🔔 Lembrete: {task['description']} agora ({task.get('data')} às {task.get('hora')})!\n")
 
+def agendar_lembrete(task):
+    if "data" in task and "hora" in task:
+        now = datetime.now()
+        data_str = task["data"].lower()
+
+        if data_str == "hoje":
+            data_real = datetime.now().strftime("%d/%m/%Y")
+        elif data_str == "amanhã" or data_str == "amanha":
+            data_real = (datetime.now() + timedelta(days=1)).strftime("%d/%m/%Y")
+        else:
+            data_real = data_str
+
+        datahora = datetime.strptime(data_real + " " + task["hora"], "%d/%m/%Y %H:%M")
+        if datahora > now:
+            segundos = (datahora - now).total_seconds()
+            threading.Timer(segundos, mostrar_lembrete, args=[task]).start()
 
 def verificar_tarefas():
     tasks = load_tasks()
-    now = datetime.now()
-
     for task in tasks:
-        if "data" in task and "hora" in task:
-            try:
-                datahora = datetime.strptime(task["data"] + " " + task["hora"], "%d/%m/%Y %H:%M")
-                if datahora > now:
-                    segundos = (datahora - now).total_seconds()
-                    threading.Timer(segundos, mostrar_lembrete, args=[task]).start()
-            except ValueError:
-                print(f"❌ Erro ao processar data/hora da tarefa: {task}")
-
-verificar_tarefas()
+        try:
+            agendar_lembrete(task)
+        except Exception as e:
+            print(f"❌ Erro ao processar data/hora da tarefa: {task}")
+            print("→", e)
 
 def menu():
     while True:
@@ -172,11 +183,11 @@ def menu():
         print("1 - Adicionar Tarefa")
         print("2 - Listar Tarefas")
         print("3 - Marcar/Remover Tarefa")
-        print("4 - Adicionar por IA") # <-- nova opção
+        print("4 - Adicionar por IA")
         print("5 - Sair")
-        
-        option = input("Escolha um opção:")
-        
+
+        option = input("Escolha uma opção: ")
+
         if option == '1':
             add_task()
         elif option == '2':
@@ -190,7 +201,6 @@ def menu():
             break
         else:
             print("❌ Opção inválida. Tente novamente.")
-
 
 if __name__ == "__main__":
     threading.Thread(target=verificar_tarefas, daemon=True).start()
