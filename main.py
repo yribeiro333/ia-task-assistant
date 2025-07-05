@@ -5,7 +5,6 @@ from openai import OpenAI
 from datetime import datetime, timedelta
 import threading
 import subprocess
-from plyer import notification
 import time
 
 load_dotenv()
@@ -151,16 +150,10 @@ def add_task_ia():
         print("❌ Erro ao agendar lembrete.")
         print("→", e)
 
-def mostrar_lembrete(task):
-    print(f"\n Lembrete: {task['description']} agora ({task.get('data')} às {task.get('hora')})!\n")
-    notification.notify(
-        title='Lembrete de Tarefa',
-        message=f"{task['description']} às {task.get('hora')}",
-        timeout=10
-    )
 
-def tocar_som():
-    os.system('aplay som.wav')
+def mostrar_lembrete(task):
+    print(f"\n🔔 Lembrete: {task['description']} agora ({task.get('data')} às {task.get('hora')})!\n")
+
 
 def agendar_lembrete(task):
     if "data" in task and "hora" in task:
