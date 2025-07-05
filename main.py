@@ -152,7 +152,15 @@ def add_task_ia():
         print("→", e)
 
 def mostrar_lembrete(task):
-    print(f"\n🔔 Lembrete: {task['description']} agora ({task.get('data')} às {task.get('hora')})!\n")
+    print(f"\n Lembrete: {task['description']} agora ({task.get('data')} às {task.get('hora')})!\n")
+    notification.notify(
+        title='Lembrete de Tarefa',
+        message=f"{task['description']} às {task.get('hora')}",
+        timeout=10
+    )
+
+def tocar_som():
+    os.system('aplay som.wav')
 
 def agendar_lembrete(task):
     if "data" in task and "hora" in task:
@@ -179,16 +187,6 @@ def verificar_tarefas():
         except Exception as e:
             print(f"❌ Erro ao processar data/hora da tarefa: {task}")
             print("→", e)
-
-def tocar_som():
-    os.system('aplay som.wav')
-
-
-def mostrar_lembretes():
-    notification.notify()
-    title= '🕑 Lembrete de Tarefa'
-    message=f'{task['description']} às {task.get('hora')}'
-    timeout=10
 
 
 def menu():
