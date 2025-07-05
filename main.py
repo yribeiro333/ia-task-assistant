@@ -4,6 +4,9 @@ import os
 from openai import OpenAI
 from datetime import datetime, timedelta
 import threading
+import subprocess
+from plyer import notification
+import time
 
 load_dotenv()
 api_key = os.getenv("OPENROUTER_API_KEY")
@@ -176,6 +179,17 @@ def verificar_tarefas():
         except Exception as e:
             print(f"❌ Erro ao processar data/hora da tarefa: {task}")
             print("→", e)
+
+def tocar_som():
+    os.system('aplay som.wav')
+
+
+def mostrar_lembretes():
+    notification.notify()
+    title= '🕑 Lembrete de Tarefa'
+    message=f'{task['description']} às {task.get('hora')}'
+    timeout=10
+
 
 def menu():
     while True:
